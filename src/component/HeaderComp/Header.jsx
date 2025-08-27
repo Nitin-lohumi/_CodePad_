@@ -37,7 +37,7 @@ function Header() {
         )}
 
         <AnimatePresence>
-          {info && socketClient.connected && socketConnected && (
+          {info && socketConnected && (
             <motion.span
               key="info"
               initial={{ x: -1000, opacity: 0, color: "blue" }}
