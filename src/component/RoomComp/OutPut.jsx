@@ -42,7 +42,7 @@ function OutPut({ code, language, roomID }) {
     try {
       socketClient.emit("runLoading", { load: true, roomID });
       setLoading(true);
-      const output = await axios.post("http://localhost:4000/RunCode", {
+      const output = await axios.post("https://codepad-server.onrender.com/RunCode", {
         code,
         languageId: getLanID(),
       });
