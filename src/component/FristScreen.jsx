@@ -6,7 +6,9 @@ import InputForm from "./InputForm";
 import { useNavigate } from "react-router-dom";
 import socketClient from "../utility/Socket_Io";
 import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 function FristScreen() {
+  const [loading, setLoading] = useState("null");
   const navigate = useNavigate();
   const { userName, setUserName, setAdmin, setSocketConnected } = useStore();
   const [roomId, setRoomId] = useState("");
@@ -34,7 +36,6 @@ function FristScreen() {
       RoomName: roomId,
       iscreate: type === "CreateButton",
     });
-
     socketClient.once("check", (valid) => {
       if (valid) {
         socketClient.emit("join-room", {
@@ -42,10 +43,20 @@ function FristScreen() {
           userName,
           isCreated: type === "CreateButton",
         });
-        if (type === "CreateButton") setAdmin(true);
-        else setAdmin(false);
-        navigate(`/Join_Room/${roomId}?isCreated=${type === "CreateButton"}`);
+
+        if (type === "CreateButton") {
+          setLoading("create");
+          setAdmin(true);
+        } else {
+          setLoading("join");
+          setAdmin(false);
+        }
+        setTimeout(() => {
+          navigate(`/Join_Room/${roomId}?isCreated=${type === "CreateButton"}`);
+          setLoading("null");
+        }, 1000);
       } else {
+        setLoading("null");
         toast.error("Room not UnAvailable!");
         socketClient.disconnect(false);
         setSocketConnected(false);
@@ -67,18 +78,28 @@ function FristScreen() {
             <Button
               variant="contained"
               color="primary"
-              className="w-full md:w-fit"
+              className="w-full md:w-fit disabled:!bg-gray-300 dark:disabled:!bg-gray-600 dark:disabled:!text-gray-400"
+              disabled={loading == "create" || loading == "join"}
               onClick={() => handleJoinOrCreate("CreateButton")}
             >
-              create Room
+              {loading == "create" ? (
+                <ClipLoader size={30} color="blue" />
+              ) : (
+                "create Room"
+              )}
             </Button>
             <Button
               variant="contained"
               color="primary"
-              className="w-full md:w-fit"
+              disabled={loading == "create" || loading == "join"}
+              className="w-full md:w-fit disabled:!bg-gray-300 dark:disabled:!bg-gray-600 dark:disabled:!text-gray-400"
               onClick={() => handleJoinOrCreate("JoinButton")}
             >
-              Join Room
+              {loading == "join" ? (
+                <ClipLoader size={30} color="blue" />
+              ) : (
+                "Join Room"
+              )}
             </Button>
           </motion.div>
         </motion.div>
