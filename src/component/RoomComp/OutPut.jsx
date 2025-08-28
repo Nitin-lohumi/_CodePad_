@@ -9,7 +9,6 @@ import { VscRunAll } from "react-icons/vsc";
 function OutPut({ code, language, roomID }) {
   const [loading, setLoading] = useState(false);
   const { setRunOutput, runOutput } = useStore();
-  console.log(language);
   function getLanID() {
     switch (language) {
       case "javascript":
@@ -28,7 +27,6 @@ function OutPut({ code, language, roomID }) {
       setRunOutput({ output, error });
     });
     socketClient.on("getloading", (load) => {
-      console.log(load);
       setLoading(load);
     });
     return () => {
@@ -38,15 +36,16 @@ function OutPut({ code, language, roomID }) {
   }, []);
 
   async function handleOuput() {
-    console.log("ascbak");
     try {
       socketClient.emit("runLoading", { load: true, roomID });
       setLoading(true);
-      const output = await axios.post("https://codepad-server.onrender.com/RunCode", {
-        code,
-        languageId: getLanID(),
-      });
-      console.log(output.data);
+      const output = await axios.post(
+        "https://codepad-server.onrender.com/RunCode",
+        {
+          code,
+          languageId: getLanID(),
+        }
+      );
 
       setRunOutput(output.data);
       socketClient.emit("outputCode", {
@@ -61,13 +60,12 @@ function OutPut({ code, language, roomID }) {
       socketClient.emit("runLoading", { load: false, roomID });
     }
   }
-  console.log(runOutput);
   return (
     <>
       <AnimatePresence>
-        <motion.div className="w-full md:h-[calc(100vh-11rem)] h-full grid grid-rows-12">
+        <motion.div className="w-full md:h-[calc(100vh-11rem)] h-76 grid grid-rows-12">
           <div
-            className={`row-span-1 p-1 dark:border-b-2 h-full flex justify-end border-l-none border-r-none border-b-2 dark:border-gray-700 border-gray-200 ${
+            className={`row-span-1 p-1 dark:border-b-2 h-full flex justify-end border-l-none border-r-none border-b-2 dark:border-gray-700 border-gray-200  ${
               loading && "flex justify-center"
             }`}
           >
@@ -89,7 +87,7 @@ function OutPut({ code, language, roomID }) {
               />
             )}
           </div>
-          <div className="row-span-11  h-full overflow-auto p-2 pb-3 text-pretty">
+          <div className="row-span-11 h-full overflow-auto p-1 md:p-2 pb-3 text-pretty">
             {runOutput.output && <pre>{runOutput.output}</pre>}
             {runOutput.error && (
               <pre className="text-red-500">{runOutput.error}</pre>

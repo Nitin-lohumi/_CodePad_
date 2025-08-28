@@ -16,14 +16,14 @@ function SelectComp({isCreated}) {
 
   return (
     <>
-      <FormControl sx={{ m: 1, minWidth: 160 }} size="small">
+      <FormControl size="small" className="!w-fit md:!m-1">
         <Select
           value={Language}
           onChange={handleChange}
           className="bg-white !font-bold dark:!bg-gray-800 dark:!text-white"
           MenuProps={{
             PaperProps: {
-              className: "dark:!bg-gray-800 dark:!text-white !mt-1",
+              className: "dark:!bg-gray-800 dark:!text-white md:!mt-1",
             },
           }}
         >

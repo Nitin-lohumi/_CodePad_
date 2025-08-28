@@ -24,11 +24,12 @@ function Rooms() {
     setMsgData,
     isTrueArr,
     setisTrue,
-    active,
+    setCountMsg,
     setActive,
     setUserName,
     Language,
     setLanguage,
+    countMsg,
   } = useStore();
   const navigate = useNavigate();
   const [query] = useSearchParams();
@@ -40,8 +41,6 @@ function hello() {
   console.log("Hello JavaScript!");
 }
 hello();`);
-  console.log(active);
-  console.log(code);
   useEffect(() => {
     socketClient.emit("totalUsers", RoomName);
 
@@ -71,6 +70,16 @@ hello();`);
       setMsgData(newmsg);
     });
 
+    socketClient.on("countMsg", (objArr) => {
+      if (isTrueArr.isChatopen) {
+        setCountMsg(0);
+        socketClient.emit("changeCount", RoomName);
+      } else {
+        const res = objArr.find((value) => value.id === socketClient.id);
+        setCountMsg(res?.msg);
+      }
+    });
+
     socketClient.on("runing", (isRun) => {
       if (isRun) {
         setisTrue({
@@ -83,7 +92,6 @@ hello();`);
     });
 
     const handleBeforeUnload = () => {
-      console.log("backpress");
       socketClient.emit("leave-room", {
         RoomName,
         userName,
@@ -102,14 +110,15 @@ hello();`);
       socketClient.off("runing");
       socketClient.off("getMsg");
       socketClient.off("userleft");
+      socketClient.off("countMsg");
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      navigate("/");
+      // navigate("/");
     };
   }, [RoomName, userName]);
 
   useEffect(() => {
     if (!RoomName || !userName || !socketClient.connected) {
-      navigate("/");
+      // navigate("/");
       socketClient.disconnect(true);
     }
   }, [RoomName, userName, socketClient.connected]);
@@ -118,11 +127,11 @@ hello();`);
     setCode(value);
     socketClient.emit("code-change", { RoomName, code: value });
   }
-  console.log(isTrueArr);
+
   return (
-    <motion.div className="h-full p-2 md:max-h-full md:min-h-10  md:w-auto md:grid md:grid-cols-3 flex flex-col dark:bg-gray-800 md:gap-2 shadow-2xl bg-gray-50  shadow-amber-600 dark:border-0">
-      <motion.div className="dark:shadow-xl shadow-xs shadow-blue-800 dark:shadow-blue-600 md:col-span-2 md:max-h-[calc(100vh-10rem)] min-h-full md:min-w-96 md:max-w-[100%] rounded-2xl">
-        <motion.div className="flex md:items-center md:justify-between justify-center mb-1 dark:outline-none outline-amber-100  outline-1 rounded-2xl">
+    <motion.div className="h-full p-2 md:max-h-full md:min-h-10  md:w-auto md:grid md:grid-cols-3 flex flex-col dark:bg-gray-800 md:gap-2 shadow-2xl bg-gray-50  shadow-amber-600  gap-1 ">
+      <motion.div className="dark:md:shadow-xl md:shadow-xs md:shadow-blue-800 dark:md:shadow-blue-600 dark:shadow-green-400 shadow md:col-span-2 md:max-h-[calc(100vh-10rem)] min-h-full md:min-w-96 md:max-w-[100%] rounded-2xl">
+        <motion.div className="flex items-center md:justify-between justify-center md:mb-1 dark:outline-none outline-amber-100  outline-1 rounded-2xl">
           <SelectComp isCreated={isCreated} />
           <div>
             <FormControl sx={{ m: 1, minWidth: 160 }} size="small">
@@ -183,14 +192,19 @@ hello();`);
           />
         </motion.div>
       </motion.div>
+
       <motion.div className="col-span-1 w-full shadow-xs shadow-blue-500 ">
         <motion.div className="w-fulls shadow-2xs shadow-green-400 flex justify-evenly sticky top-0 left-0">
           <Button
             className={`w-full ${
               isTrueArr.isOutputOpen &&
               "dark:!bg-blue-700 !bg-amber-200 dark:!text-white"
-            }`}
+            } !border-l-1 !border-r-1 dark:!border-r-1 dark:!border-gray-600 !border-gray-300`}
             onClick={() => {
+              socketClient.emit("chatTabOpen", {
+                ChatTabOpen: false,
+                roomID: RoomName,
+              });
               setisTrue({
                 isOutputOpen: true,
                 isChatopen: false,
@@ -202,23 +216,37 @@ hello();`);
               });
             }}
           >
-            Run
+            run
           </Button>
 
           <Button
-            className={`w-full ${
+            className={`w-full !border-r-1 !border-gray-300 dark:!border-r-1 dark:!border-gray-600 ${
               isTrueArr.isChatopen &&
               "dark:!bg-blue-700 !bg-amber-200 dark:!text-white"
-            }`}
-            onClick={() =>
+            } !flex !flex-row !items-center !relative top-0`}
+            onClick={() => {
+              socketClient.emit("changeCount", RoomName);
+              socketClient.emit("chatTabOpen", {
+                ChatTabOpen: true,
+                roomID: RoomName,
+              });
+              setCountMsg(0);
               setisTrue({
                 isOutputOpen: false,
                 isChatopen: true,
                 isACtivePeopleBox: false,
-              })
-            }
+              });
+            }}
           >
-            Chats
+            <div className="">chat</div>
+            <span
+              className="!text-xs shadow-xs dark:shadow-xl dark:shadow-amber-500 
+              shadow-green-800
+              rounded-full bg-red-500 pl-1 pr-1 m-0 !absolute top-0 right-0 text-white font-extrabold
+             font-sans"
+            >
+              {isTrueArr.isChatopen ? "" : countMsg != 0 && countMsg}
+            </span>
           </Button>
 
           <Button
@@ -227,6 +255,10 @@ hello();`);
               "dark:!bg-blue-700 !bg-amber-200 dark:!text-white"
             }`}
             onClick={() => {
+              socketClient.emit("chatTabOpen", {
+                ChatTabOpen: false,
+                roomID: RoomName,
+              });
               setisTrue({
                 isOutputOpen: false,
                 isChatopen: false,

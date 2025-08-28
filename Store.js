@@ -9,6 +9,7 @@ const useStore = create((set) => ({
     msgData: [],
     admin: false,
     active: [],
+    countMsg: 0,
     runOutput: { output: "", error: "" },
     socketConnected: false,
     isTrueArr: {
@@ -39,7 +40,8 @@ const useStore = create((set) => ({
     setAdmin: (check) => set({ admin: check }),
     setActive: (users) => set({ active: [...users] }),
     setSocketConnected: (Conn) => set({ socketConnected: Conn }),
-    setRunOutput: (obj) => set({ runOutput: obj })
+    setRunOutput: (obj) => set({ runOutput: obj }),
+    setCountMsg: (count) => set({ countMsg: count })
 }));
 
 export default useStore;

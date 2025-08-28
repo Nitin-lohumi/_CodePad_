@@ -10,7 +10,6 @@ function UserActive() {
     if (!socketClient) return;
     setloading(true);
     socketClient.on("getUsers", (activeUser) => {
-      console.log("aaca");
       setActive(activeUser);
       setfilteruser(active?.filter((user) => user.id !== socketClient.id));
     });
@@ -20,7 +19,7 @@ function UserActive() {
     };
   }, []);
   return (
-    <div className="p-3 rounded h-full md:h-[calc(100vh-8.9rem)] overflow-auto">
+    <div className="p-3 rounded h-80 md:h-[calc(100vh-8.9rem)] overflow-auto">
       {isloading ? (
         <>loading.... users</>
       ) : (

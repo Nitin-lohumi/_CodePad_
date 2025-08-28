@@ -37,7 +37,7 @@ function ChatApp({ roomID }) {
   };
 
   return (
-    <div className="w-full p-2 md:h-[calc(100vh-8.9rem)] h-full grid grid-rows-12">
+    <div className="w-full p-2 border-amber-400 md:h-[calc(100vh-8.9rem)] h-80 grid grid-rows-12">
       <motion.div
         className="row-span-10 overflow-auto text-justify p-3"
         ref={divRef}

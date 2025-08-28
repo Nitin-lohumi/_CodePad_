@@ -13,11 +13,11 @@ function Header() {
       setInfo(
         "If you press back or left Arrow (pc), then you will be logged out"
       );
-    }, 1000);
+    }, 2000);
 
     const end = setTimeout(() => {
       setInfo("");
-    }, 10000);
+    }, 12000);
 
     return () => {
       clearTimeout(start);
@@ -43,7 +43,7 @@ function Header() {
               initial={{ x: -1000, opacity: 0, color: "blue" }}
               animate={{ x: 0, opacity: 1, color: "yellow" }}
               exit={{ x: 1000, opacity: 0, color: "red" }}
-              transition={{ duration: 2, ease: "circInOut" }}
+              transition={{ duration: 3, ease: "circInOut" }}
               className="dark:text-blue-400 text-gray-600"
             >
               {info}

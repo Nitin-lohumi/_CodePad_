@@ -7,22 +7,35 @@ import { useNavigate } from "react-router-dom";
 import socketClient from "../utility/Socket_Io";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
+
 function FristScreen() {
   const [loading, setLoading] = useState("null");
   const navigate = useNavigate();
   const { userName, setUserName, setAdmin, setSocketConnected } = useStore();
   const [roomId, setRoomId] = useState("");
+
   useEffect(() => {
-    socketClient.disconnect(true);
-    setSocketConnected(false);
+    if (socketClient.connected) {
+      socketClient.disconnect();
+      setSocketConnected(false);
+      console.log("disconnected");
+      window.location.reload(true);
+    }
   }, []);
 
   function handleJoinOrCreate(type) {
-    if (!userName || !roomId) return;
+    setLoading(type === "CreateButton" ? "create" : "join");
+    if (!userName || !roomId) {
+      toast.error("Please enter required details");
+      setLoading("null");
+      return;
+    }
 
     if (!socketClient.connected) {
       socketClient.connect();
+      console.log("connected");
       setSocketConnected(true);
+
       socketClient.once("connect", () => {
         emitCheckValidate(type);
       });
@@ -36,6 +49,7 @@ function FristScreen() {
       RoomName: roomId,
       iscreate: type === "CreateButton",
     });
+
     socketClient.once("check", (valid) => {
       if (valid) {
         socketClient.emit("join-room", {
@@ -43,68 +57,61 @@ function FristScreen() {
           userName,
           isCreated: type === "CreateButton",
         });
-
-        if (type === "CreateButton") {
-          setLoading("create");
-          setAdmin(true);
-        } else {
-          setLoading("join");
-          setAdmin(false);
-        }
+        setAdmin(type === "CreateButton");
         setTimeout(() => {
           navigate(`/Join_Room/${roomId}?isCreated=${type === "CreateButton"}`);
           setLoading("null");
-        }, 1000);
+        }, 200);
       } else {
-        setLoading("null");
-        toast.error("Room not UnAvailable!");
-        socketClient.disconnect(false);
+        toast.error("Room not available!");
+        socketClient.disconnect();
         setSocketConnected(false);
+        setLoading("null");
       }
     });
   }
 
   return (
-    <>
-      <motion.div className="md:h-full max-h-full md:w-full p-3 text-white flex items-center justify-center">
-        <motion.div className="rounded-lg p-5 md:p-2 shadow-2xl dark:shadow-amber-100 shadow-blue-900 md:min-w-[400px] md:max-w-[700px] min-w-[350px] max-w-[500px]">
-          <InputForm
-            setUserName={setUserName}
-            userName={userName}
-            setRoomId={setRoomId}
-            roomId={roomId}
-          />
-          <motion.div className="flex gap-3 mt-4 items-center md:justify-between flex-col md:flex-row w-full md:p-3">
-            <Button
-              variant="contained"
-              color="primary"
-              className="w-full md:w-fit disabled:!bg-gray-300 dark:disabled:!bg-gray-600 dark:disabled:!text-gray-400"
-              disabled={loading == "create" || loading == "join"}
-              onClick={() => handleJoinOrCreate("CreateButton")}
-            >
-              {loading == "create" ? (
-                <ClipLoader size={30} color="blue" />
-              ) : (
-                "create Room"
-              )}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={loading == "create" || loading == "join"}
-              className="w-full md:w-fit disabled:!bg-gray-300 dark:disabled:!bg-gray-600 dark:disabled:!text-gray-400"
-              onClick={() => handleJoinOrCreate("JoinButton")}
-            >
-              {loading == "join" ? (
-                <ClipLoader size={30} color="blue" />
-              ) : (
-                "Join Room"
-              )}
-            </Button>
-          </motion.div>
+    <motion.div className="md:h-full max-h-full md:w-full p-3 text-white flex items-center justify-center">
+      <motion.div className="rounded-lg p-5 md:p-2 shadow-2xl dark:shadow-amber-100 shadow-blue-900 md:min-w-[400px] md:max-w-[700px] min-w-[350px] max-w-[500px]">
+        <InputForm
+          setUserName={setUserName}
+          userName={userName}
+          setRoomId={setRoomId}
+          roomId={roomId}
+        />
+
+        <motion.div className="flex gap-3 mt-4 items-center md:justify-between flex-col md:flex-row w-full md:p-3">
+          <Button
+            variant="contained"
+            color="primary"
+            className="w-full md:w-fit disabled:!bg-gray-300 dark:disabled:!bg-gray-600 dark:disabled:!text-gray-400"
+            disabled={loading === "create" || loading === "join"}
+            onClick={() => handleJoinOrCreate("CreateButton")}
+          >
+            {loading === "create" ? (
+              <ClipLoader size={30} color="blue" />
+            ) : (
+              "Create Room"
+            )}
+          </Button>
+
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={loading === "create" || loading === "join"}
+            className="w-full md:w-fit disabled:!bg-gray-300 dark:disabled:!bg-gray-600 dark:disabled:!text-gray-400"
+            onClick={() => handleJoinOrCreate("JoinButton")}
+          >
+            {loading === "join" ? (
+              <ClipLoader size={30} color="blue" />
+            ) : (
+              "Join Room"
+            )}
+          </Button>
         </motion.div>
       </motion.div>
-    </>
+    </motion.div>
   );
 }
 
