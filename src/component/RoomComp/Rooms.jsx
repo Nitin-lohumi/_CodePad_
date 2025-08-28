@@ -112,13 +112,13 @@ hello();`);
       socketClient.off("userleft");
       socketClient.off("countMsg");
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      // navigate("/");
+      navigate("/");
     };
   }, [RoomName, userName]);
 
   useEffect(() => {
     if (!RoomName || !userName || !socketClient.connected) {
-      // navigate("/");
+      navigate("/");
       socketClient.disconnect(true);
     }
   }, [RoomName, userName, socketClient.connected]);
