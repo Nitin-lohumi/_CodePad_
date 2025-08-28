@@ -3,21 +3,23 @@ import ToggleTheme from "./ToggleTheme";
 import useStore from "../../../Store";
 import socketClient from "../../utility/Socket_Io";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 function Header() {
-  const { userName, admin, socketConnected } = useStore();
+  const { admin, socketConnected } = useStore();
   const [info, setInfo] = useState("");
-
+  const params = useParams();
+  const RoomName = params.roomID;
   useEffect(() => {
     const start = setTimeout(() => {
       setInfo(
         "If you press back or left Arrow (pc), then you will be logged out"
       );
-    }, 2000);
+    }, 1000);
 
     const end = setTimeout(() => {
       setInfo("");
-    }, 12000);
+    }, 10000);
 
     return () => {
       clearTimeout(start);
@@ -28,16 +30,15 @@ function Header() {
   return (
     <div className="flex w-full justify-between p-2 items-center shadow-xs dark:shadow-none outline-amber-100 overflow-hidden shadow-blue-200 rounded-xl">
       <div className="font-bold md:text-xl text-2xs gap-2 w-full items-start flex flex-col">
-        {admin && socketClient.connected && socketConnected ? (
-          <span className="capitalize text-2xl text-blue-500 font-extrabold underline">
-            {userName}
+        {admin && socketClient.connected && socketConnected && (
+          <span className="capitalize text-2xl text-blue-500 font-extrabold flex flex-col border-b-2 border-blue-500">
+            <span className="text-teal-600 text-xl">
+              {" Room: " + RoomName}
+            </span>
           </span>
-        ) : (
-          userName
         )}
-
         <AnimatePresence>
-          {info && socketConnected && (
+          {!info && !socketConnected && (
             <motion.span
               key="info"
               initial={{ x: -1000, opacity: 0, color: "blue" }}

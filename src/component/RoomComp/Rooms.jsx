@@ -87,7 +87,7 @@ hello();`);
           isChatopen: false,
           isACtivePeopleBox: false,
         });
-        toast.info(" Admin change Page to  RUN Page ");
+        // toast.info(" Admin change Page to  RUN Page ");
       }
     });
 
@@ -100,7 +100,7 @@ hello();`);
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
       setUserName("");
-      toast.info("You are disconnected");
+      // toast.info("You are disconnected");
       socketClient.emit("totalUsers", RoomName);
       socketClient.emit("leave-room", { RoomName, userName });
       socketClient.off("init-code");
@@ -131,9 +131,10 @@ hello();`);
   return (
     <motion.div className="h-full p-2 md:max-h-full md:min-h-10  md:w-auto md:grid md:grid-cols-3 flex flex-col dark:bg-gray-800 md:gap-2 shadow-2xl bg-gray-50  shadow-amber-600  gap-1 ">
       <motion.div className="dark:md:shadow-xl md:shadow-xs md:shadow-blue-800 dark:md:shadow-blue-600 dark:shadow-green-400 shadow md:col-span-2 md:max-h-[calc(100vh-10rem)] min-h-full md:min-w-96 md:max-w-[100%] rounded-2xl">
+        <h1 className="pl-3 p-1 capitalize">{userName}</h1>
         <motion.div className="flex items-center md:justify-between justify-center md:mb-1 dark:outline-none outline-amber-100  outline-1 rounded-2xl">
           <SelectComp isCreated={isCreated} />
-          <div>
+          <div className="w-fit">
             <FormControl sx={{ m: 1, minWidth: 160 }} size="small">
               <Select
                 value={theme}
@@ -183,7 +184,7 @@ hello();`);
             </div>
           </div>
         </motion.div>
-        <motion.div className="md:overflow-auto md:max-h-[calc(100vh-10.4rem)] rounded-2xl min-h-50rem max-h-96 border-amber-400 md:min-h-[calc(100vh-18rem)]">
+        <motion.div className="md:overflow-auto md:max-h-[calc(100vh-12.2rem)] rounded-2xl min-h-50rem max-h-96 border-amber-400 md:min-h-[calc(100vh-18rem)]">
           <EditorComp
             handleChange={handleChange}
             code={code}
