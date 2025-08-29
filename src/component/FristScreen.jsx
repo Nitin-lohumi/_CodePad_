@@ -18,7 +18,6 @@ function FristScreen() {
     if (socketClient.connected) {
       socketClient.disconnect();
       setSocketConnected(false);
-      console.log("disconnected");
       window.location.reload(true);
     }
   }, []);
@@ -30,20 +29,14 @@ function FristScreen() {
       setLoading("null");
       return;
     }
-
-    if (!socketClient.connected) {
-      socketClient.connect();
-      console.log("connected");
-      setSocketConnected(true);
-
-      socketClient.once("connect", () => {
-        emitCheckValidate(type);
-      });
-    } else {
+    socketClient.connect();
+    console.log("connected");
+    setSocketConnected(true);
+    socketClient.off("connect");
+    socketClient.on("connect", () => {
       emitCheckValidate(type);
-    }
+    });
   }
-
   function emitCheckValidate(type) {
     socketClient.emit("CheckValidate", {
       RoomName: roomId,
