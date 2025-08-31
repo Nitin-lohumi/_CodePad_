@@ -30,6 +30,7 @@ function Rooms() {
     Language,
     setLanguage,
     countMsg,
+    admin,
   } = useStore();
   const navigate = useNavigate();
   const [query] = useSearchParams();
@@ -131,7 +132,10 @@ hello();`);
   return (
     <motion.div className="h-full p-2 md:max-h-full md:min-h-10  md:w-auto md:grid md:grid-cols-3 flex flex-col dark:bg-gray-800 md:gap-2 shadow-2xl bg-gray-50  shadow-amber-600  gap-1 ">
       <motion.div className="dark:md:shadow-xl md:shadow-xs md:shadow-blue-800 dark:md:shadow-blue-600 dark:shadow-green-400 shadow md:col-span-2 md:max-h-[calc(100vh-10rem)] min-h-full md:min-w-96 md:max-w-[100%] rounded-2xl">
-        <h1 className="pl-3 p-1 capitalize">{userName}</h1>
+        <h1 className="pl-3 p-1 capitalize">
+          {admin && "Admin : "}
+          {userName}
+        </h1>
         <motion.div className="flex items-center md:justify-between justify-center md:mb-1 dark:outline-none outline-amber-100  outline-1 rounded-2xl">
           <SelectComp isCreated={isCreated} />
           <div className="w-fit">
