@@ -30,7 +30,7 @@ function Header() {
   return (
     <div className="flex w-full justify-between p-2 items-center shadow-xs dark:shadow-none outline-amber-100 overflow-hidden shadow-blue-200 rounded-xl">
       <div className="font-bold md:text-xl text-2xs gap-2 w-full items-start flex flex-col">
-        {admin && socketClient.connected && socketConnected && (
+        {socketClient.connected && socketConnected && (
           <span className="capitalize text-2xl text-blue-500 font-extrabold flex flex-col border-b-2 border-blue-500">
             <span className="text-teal-600 text-xl">
               {" Room: " + RoomName}
@@ -38,7 +38,7 @@ function Header() {
           </span>
         )}
         <AnimatePresence>
-          {!info && !socketConnected && (
+          {info && socketConnected && (
             <motion.span
               key="info"
               initial={{ x: -1000, opacity: 0, color: "blue" }}
