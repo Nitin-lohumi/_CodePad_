@@ -52,10 +52,8 @@ function FristScreen() {
           isCreated: type === "CreateButton",
         });
         setAdmin(type === "CreateButton");
-        setTimeout(() => {
-          navigate(`/Join_Room/${roomId}?isCreated=${type === "CreateButton"}`);
-          setLoading("null");
-        }, 100);
+        navigate(`/Join_Room/${roomId}?isCreated=${type === "CreateButton"}`);
+        setLoading("null");
       } else {
         toast.error("Room not available!");
         socketClient.disconnect();
