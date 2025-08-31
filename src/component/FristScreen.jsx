@@ -18,8 +18,11 @@ function FristScreen() {
     if (socketClient.connected) {
       socketClient.disconnect();
       setSocketConnected(false);
-      window.location.reload(true);
+      // window.location.reload(true);
     }
+    return () => {
+      socketClient.off("connect");
+    };
   }, []);
 
   function handleJoinOrCreate(type) {
@@ -30,9 +33,7 @@ function FristScreen() {
       return;
     }
     socketClient.connect();
-    console.log("connected");
     setSocketConnected(true);
-    socketClient.off("connect");
     socketClient.on("connect", () => {
       emitCheckValidate(type);
     });
@@ -54,7 +55,7 @@ function FristScreen() {
         setTimeout(() => {
           navigate(`/Join_Room/${roomId}?isCreated=${type === "CreateButton"}`);
           setLoading("null");
-        }, 200);
+        }, 100);
       } else {
         toast.error("Room not available!");
         socketClient.disconnect();
